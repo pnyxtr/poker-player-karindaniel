@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Security.Principal;
+using Newtonsoft.Json.Linq;
 
 namespace Nancy.Simple
 {
@@ -12,9 +13,28 @@ namespace Nancy.Simple
 
 		    if (state.community_cards.Count == 0)
 		        return PreFlopStrategy(state);
+            else if (state.community_cards.Count == 3)
+                return FlopStrategy(state);
 
             return 0;
 		}
+
+	    private static int FlopStrategy(MainState state)
+	    {
+	        var player = state.players[state.in_action];
+	        var card1 = player.hole_cards[0];
+	        var card2 = player.hole_cards[1];
+
+	        for (int i = 0; i < 3; i++)
+	        {
+	            if (card1.rank.Equals(state.community_cards[i].rank))
+	                return 10000;
+	            if (card2.rank.Equals(state.community_cards[i].rank))
+	                return 10000;
+	        }
+	        return 0;
+	    }
+
 
 	    private static bool GoodHoleCards(HoleCard card1, HoleCard card2)
 	    {
@@ -44,12 +64,11 @@ namespace Nancy.Simple
                 if (GoodHoleCards(card1, card2))
                     return 10000;
             }
-
-            //else if (state.current_buy_in <= state.small_blind * 4)
-            //{
-            //    if (GoodHoleCards(card1, card2))
-            //        return state.current_buy_in;
-            //}
+            else if (state.current_buy_in <= state.small_blind * 4)
+            {
+                if (GoodHoleCards(card1, card2))
+                    return state.current_buy_in;
+            }
 
             return 0;
         }
