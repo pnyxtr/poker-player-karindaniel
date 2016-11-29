@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using System;
+using System.Security.Principal;
 using Newtonsoft.Json.Linq;
 
 namespace Nancy.Simple
@@ -85,7 +86,7 @@ namespace Nancy.Simple
         }
 
 
-	    private static bool HighPair(HoleCard card1, HoleCard card2)
+	    public static bool HighPair(HoleCard card1, HoleCard card2)
 	    {
             var equalCards = card1.rank == card2.rank;
             return equalCards && RankToValue.Convert(card1.rank) >= 9;
@@ -155,13 +156,13 @@ namespace Nancy.Simple
 
 	        if ((float)state.small_blind/(float)player.stack > (1/7f))
 	            return 10000;
-            else if (state.small_blind > 60)
+            else if (state.small_blind >= 60)
             {
                 if (GoodHoleCards(card1, card2) ||
                     MediumHoleCards(card1, card2))
                     return 10000;
             }            
-            else if (state.small_blind > 30)
+            else if (state.small_blind >= 30)
             {
                 if (state.current_buy_in > state.small_blind*2)
                 {
@@ -181,6 +182,13 @@ namespace Nancy.Simple
                 if (MediumHoleCards(card1, card2))
                     return state.current_buy_in;
             }
+            else if (state.current_buy_in <= state.small_blind*2) // Bluff               
+	        {
+                var r = new Random();
+	            if (r.NextDouble() < 0.2f)
+	                return state.pot;
+	        };
+
 
             return 0;
         }
