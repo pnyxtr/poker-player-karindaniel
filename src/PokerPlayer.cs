@@ -172,17 +172,18 @@ namespace Nancy.Simple
                 if (GoodHoleCards(card1, card2))
                     return 10000;
             }
-            else if (state.current_buy_in <= state.small_blind * 4)
+
+            if (state.current_buy_in <= state.small_blind * 4)
             {
                 if (GoodHoleCards(card1, card2))
                     return state.current_buy_in;
             }
-            else if (state.current_buy_in <= state.small_blind * 2)
+            if (state.current_buy_in <= state.small_blind * 2)
             {
                 if (MediumHoleCards(card1, card2))
                     return state.current_buy_in;
             }
-            else if (state.pot <= state.small_blind * 3) // Bluff               
+            if (state.pot <= state.small_blind * 3) // Bluff               
             {
                 if (RankToValue.Convert(card1.rank) >= 10 ||
                     RankToValue.Convert(card2.rank) >= 10)
