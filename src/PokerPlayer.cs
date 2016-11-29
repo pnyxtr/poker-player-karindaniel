@@ -154,9 +154,9 @@ namespace Nancy.Simple
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
 
-	        if ((float)state.small_blind/(float)player.stack > (1/7f))
+	        if ((float)state.small_blind/(float)player.stack > (1/7f)) // All in if stack too small
 	            return 10000;
-            else if (state.small_blind >= 60)
+            else if (state.small_blind >= 60) // if small blind large, all in on good cards
             {
                 if (GoodHoleCards(card1, card2) ||
                     MediumHoleCards(card1, card2))
@@ -183,13 +183,12 @@ namespace Nancy.Simple
                 if (MediumHoleCards(card1, card2))
                     return state.current_buy_in;
             }
-            if (state.pot <= state.small_blind * 3) // Bluff               
+            if (state.pot <= state.small_blind * 4) // Bluff               
             {
                 if (RankToValue.Convert(card1.rank) >= 10 ||
                     RankToValue.Convert(card2.rank) >= 10)
-                    return state.pot;
+                    return state.current_buy_in+state.minimum_raise-player.bet;
             };
-
 
             return 0;
         }
