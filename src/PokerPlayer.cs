@@ -5,7 +5,7 @@ namespace Nancy.Simple
 {
 	public static class PokerPlayer
 	{
-		public static readonly string VERSION = "wtf";
+		public static readonly string VERSION = "flopturnriver";
 
 		public static int BetRequest(JObject gameState)
 		{
@@ -15,6 +15,10 @@ namespace Nancy.Simple
 		        return PreFlopStrategy(state);
             else if (state.community_cards.Count == 3)
                 return FlopStrategy(state);
+            else if (state.community_cards.Count == 4)
+                return TurnStrategy(state);
+            else if (state.community_cards.Count == 5)
+                return RiverStrategy(state);
 
             return 0;
 		}
@@ -28,15 +32,47 @@ namespace Nancy.Simple
 	        for (int i = 0; i < 3; i++)
 	        {
 	            if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
-	                return 10000;
+	                return state.pot;
 	            if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
-	                return 10000;
+	                return state.pot;
 	        }
 	        return 0;
 	    }
 
+        private static int TurnStrategy(MainState state)
+        {
+            var player = state.players[state.in_action];
+            var card1 = player.hole_cards[0];
+            var card2 = player.hole_cards[1];
 
-	    private static bool GoodHoleCards(HoleCard card1, HoleCard card2)
+            for (int i = 0; i < 4; i++)
+            {
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
+                    return state.pot;
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
+                    return state.pot;
+            }
+            return 0;
+        }
+
+        private static int RiverStrategy(MainState state)
+        {
+            var player = state.players[state.in_action];
+            var card1 = player.hole_cards[0];
+            var card2 = player.hole_cards[1];
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
+                    return state.pot;
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
+                    return state.pot;
+            }
+            return 0;
+        }
+
+
+        private static bool GoodHoleCards(HoleCard card1, HoleCard card2)
 	    {
             var equalCards = card1.rank == card2.rank;
             var card1High = RankToValue.Convert(card1.rank) >= 10;
