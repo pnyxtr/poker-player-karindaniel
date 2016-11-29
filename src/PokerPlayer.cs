@@ -4,7 +4,7 @@ namespace Nancy.Simple
 {
 	public static class PokerPlayer
 	{
-		public static readonly string VERSION = "A little better player";
+		public static readonly string VERSION = "A little better player2";
 
 		public static int BetRequest(JObject gameState)
 		{
@@ -15,7 +15,7 @@ namespace Nancy.Simple
             var card2 = player.hole_cards[1];
 
 
-		    if (state.current_buy_in > 200)
+		    if (state.small_blind > 100)
 		    {
 		        var equalCards = card1.rank == card2.rank;
 		        var card1High = RankToValue.Convert(card1.rank) >= 10;
