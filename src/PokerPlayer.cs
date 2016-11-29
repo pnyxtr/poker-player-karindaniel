@@ -41,6 +41,10 @@ namespace Nancy.Simple
 
 	        if (AlmostFlush(state))
 	            return state.pot;
+
+	        if (state.current_buy_in == 0)
+	            return state.minimum_raise;
+
 	        return 0;
 	    }
 
