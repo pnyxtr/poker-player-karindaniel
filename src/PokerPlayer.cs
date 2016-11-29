@@ -156,6 +156,21 @@ namespace Nancy.Simple
 	        return false;
 	    }
 
+        private static bool PremiumHoleCards(HoleCard card1, HoleCard card2)
+        {
+            var equalCards = card1.rank == card2.rank;
+            var card1High = RankToValue.Convert(card1.rank) >= 10;
+            var card2High = RankToValue.Convert(card2.rank) >= 10;
+            var card1Ace = RankToValue.Convert(card1.rank) >= 14;
+            var card2Ace = RankToValue.Convert(card2.rank) >= 14;
+
+            if ((equalCards && RankToValue.Convert(card1.rank) >= 9) ||
+                (card1Ace && card2High) ||
+                (card2Ace && card1High))
+                return true;
+            return false;
+        }
+
         private static bool MediumHoleCards(HoleCard card1, HoleCard card2)
         {
             var equalCards = card1.rank == card2.rank;
@@ -240,7 +255,8 @@ namespace Nancy.Simple
                     RankToValue.Convert(card2.rank) >= 10)
                     return state.current_buy_in+state.minimum_raise-player.bet;
             };
-
+            if (PremiumHoleCards(card1, card2) && player.bet >= state.small_blind*3)
+                return 10000;
             return 0;
         }
 
