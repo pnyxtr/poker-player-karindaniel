@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Principal;
+using System.Xml.Schema;
 using Newtonsoft.Json.Linq;
 
 namespace Nancy.Simple
@@ -25,29 +26,76 @@ namespace Nancy.Simple
             return 0;
 		}
 
-	    private static int FlopStrategy(MainState state)
+	    private static int FlopStrategy2Players(MainState state)
 	    {
-	        var player = state.players[state.in_action];
-	        var card1 = player.hole_cards[0];
-	        var card2 = player.hole_cards[1];
+            var player = state.players[state.in_action];
+            var card1 = player.hole_cards[0];
+            var card2 = player.hole_cards[1];
+            if (HighPair(card1, card2))
+                return state.pot;
+            for (int i = 0; i < 3; i++)
+            {
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
+                    return state.pot;
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
+                    return state.pot;
+            }
 
-	        if (HighPair(card1, card2))
-	            return state.pot;
-	        for (int i = 0; i < 3; i++)
+            if (AlmostFlush(state))
+                return state.pot;
+
+            if (state.current_buy_in == 0)
+                return state.minimum_raise;
+
+            return 0;
+        }
+
+	    private static int GetBoardHighestCard(MainState state)
+	    {
+	        int max = 0;
+	        for (int i = 0; i < state.community_cards.Count; i++)
 	        {
-	            if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
-	                return state.pot;
-	            if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
-	                return state.pot;
+	            var r = RankToValue.Convert(state.community_cards[i].rank);
+	            if (r > max)
+	            {
+	                max = r;
+	            }
 	        }
+	        return max;
+        }
 
-	        if (AlmostFlush(state))
-	            return state.pot;
+        private static int FlopStrategyManyPlayers(MainState state)
+        {
+            var player = state.players[state.in_action];
+            var card1 = player.hole_cards[0];
+            var card2 = player.hole_cards[1];
+            var highestCard = GetBoardHighestCard(state);
+            if (HighPair(card1, card2) && RankToValue.Convert(card1.rank) >= highestCard)
+                return state.pot;
+            for (int i = 0; i < 3; i++)
+            {
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= highestCard)
+                    return state.pot;
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= highestCard)
+                    return state.pot;
+            }
 
-	        if (state.current_buy_in == 0)
-	            return state.minimum_raise;
+            if (AlmostFlush(state))
+                return state.pot;
 
-	        return 0;
+            if (state.current_buy_in == 0)
+                return state.minimum_raise;
+
+            return 0;
+        }
+
+        private static int FlopStrategy(MainState state)
+	    {
+            var numActivePlayers = state.players.Count(x => x.status == "active");
+	        if (numActivePlayers <= 2)
+	            return FlopStrategy2Players(state);
+
+	        return FlopStrategyManyPlayers(state);
 	    }
 
         private static int TurnStrategy(MainState state)
