@@ -8,6 +8,9 @@ namespace Nancy.Simple
     public class HandAnalyzer
     {
         public void Analyze()
+        {
+            
+        }
 
     }
 }
