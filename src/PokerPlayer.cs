@@ -29,6 +29,8 @@ namespace Nancy.Simple
 	        var card1 = player.hole_cards[0];
 	        var card2 = player.hole_cards[1];
 
+	        if (HighPair(card1, card2))
+	            return state.pot;
 	        for (int i = 0; i < 3; i++)
 	        {
 	            if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
@@ -48,6 +50,8 @@ namespace Nancy.Simple
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
 
+            if (HighPair(card1, card2))
+                return state.pot;
             for (int i = 0; i < 4; i++)
             {
                 if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
@@ -64,6 +68,8 @@ namespace Nancy.Simple
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
 
+            if (HighPair(card1, card2))
+                return state.pot;
             for (int i = 0; i < 5; i++)
             {
                 if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
