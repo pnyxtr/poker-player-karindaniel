@@ -4,7 +4,7 @@ namespace Nancy.Simple
 {
 	public static class PokerPlayer
 	{
-		public static readonly string VERSION = "A little better player2";
+		public static readonly string VERSION = "wtf";
 
 		public static int BetRequest(JObject gameState)
 		{
@@ -37,7 +37,7 @@ namespace Nancy.Simple
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
 
-	        if ((float)state.small_blind/(float)player.stack < (1/14f))
+	        if ((float)state.small_blind/(float)player.stack > (1/14f))
 	            return 10000;
             else if (state.small_blind > 30)
             {
