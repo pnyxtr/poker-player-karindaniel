@@ -27,9 +27,9 @@ namespace Nancy.Simple
 
 	        for (int i = 0; i < 3; i++)
 	        {
-	            if (card1.rank.Equals(state.community_cards[i].rank))
+	            if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
 	                return 10000;
-	            if (card2.rank.Equals(state.community_cards[i].rank))
+	            if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
 	                return 10000;
 	        }
 	        return 0;
