@@ -51,14 +51,32 @@ namespace Nancy.Simple
 	        return false;
 	    }
 
-	    private static int PreFlopStrategy(MainState state)
+        private static bool MediumHoleCards(HoleCard card1, HoleCard card2)
+        {
+            var equalCards = card1.rank == card2.rank;
+            var card1High = RankToValue.Convert(card1.rank) >= 10;
+            var card2High = RankToValue.Convert(card2.rank) >= 10;
+
+            if (equalCards ||
+                (card1High && card2High))
+                return true;
+            return false;
+        }
+
+        private static int PreFlopStrategy(MainState state)
 	    {
             var player = state.players[state.in_action];
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
 
-	        if ((float)state.small_blind/(float)player.stack > (1/14f))
+	        if ((float)state.small_blind/(float)player.stack > (1/7f))
 	            return 10000;
+            else if (state.small_blind > 60)
+            {
+                if (GoodHoleCards(card1, card2) ||
+                    MediumHoleCards(card1, card2))
+                    return 10000;
+            }
             else if (state.small_blind > 30)
             {
                 if (GoodHoleCards(card1, card2))
@@ -67,6 +85,11 @@ namespace Nancy.Simple
             else if (state.current_buy_in <= state.small_blind * 4)
             {
                 if (GoodHoleCards(card1, card2))
+                    return state.current_buy_in;
+            }
+            else if (state.current_buy_in <= state.small_blind * 2)
+            {
+                if (MediumHoleCards(card1, card2))
                     return state.current_buy_in;
             }
 
