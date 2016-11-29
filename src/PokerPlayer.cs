@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Principal;
 using Newtonsoft.Json.Linq;
 
@@ -153,6 +154,8 @@ namespace Nancy.Simple
             var player = state.players[state.in_action];
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
+            var numActivePlayers = state.players.Count(x => x.status == "active");
+                
 
 	        if ((float)state.small_blind/(float)player.stack > (1/7f)) // All in if stack too small
 	            return 10000;
@@ -162,7 +165,7 @@ namespace Nancy.Simple
                     MediumHoleCards(card1, card2))
                     return 10000;
             }            
-            else if (state.small_blind >= 30)
+            else if (numActivePlayers <= 2)
             {
                 if (state.current_buy_in > state.small_blind*2)
                 {
