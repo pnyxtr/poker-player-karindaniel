@@ -182,12 +182,12 @@ namespace Nancy.Simple
                 if (MediumHoleCards(card1, card2))
                     return state.current_buy_in;
             }
-            else if (state.current_buy_in <= state.small_blind*2) // Bluff               
-	        {
-                var r = new Random();
-	            if (r.NextDouble() < 0.2f)
-	                return state.pot;
-	        };
+            else if (state.pot <= state.small_blind * 3) // Bluff               
+            {
+                if (RankToValue.Convert(card1.rank) >= 10 ||
+                    RankToValue.Convert(card2.rank) >= 10)
+                    return state.pot;
+            };
 
 
             return 0;
