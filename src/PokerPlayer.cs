@@ -36,6 +36,9 @@ namespace Nancy.Simple
 	            if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
 	                return state.pot;
 	        }
+
+	        if (AlmostFlush(state))
+	            return state.pot;
 	        return 0;
 	    }
 
@@ -98,6 +101,35 @@ namespace Nancy.Simple
                 return true;
             return false;
         }
+
+	    private static bool AlmostFlush(MainState state)
+	    {
+            var player = state.players[state.in_action];
+            var card1 = player.hole_cards[0];
+            var card2 = player.hole_cards[1];
+            string[] colors = { "spades", "clubs", "hearts", "diamonds"};
+
+            foreach (var color in colors)
+            {
+                int count = 0;
+                if (card1.suit == color)
+                    count++;
+                if (card2.suit == color)
+                    count++;
+                if (count == 0)
+                    continue;
+                
+                for (int i = 0; i < state.community_cards.Count; i++)
+                {
+                    if (state.community_cards[i].suit == color)
+                        count++;
+                }
+                if (count >= 4)
+                    return true;
+            }
+
+	        return false;
+	    }
 
         private static int PreFlopStrategy(MainState state)
 	    {
