@@ -8,7 +8,7 @@ namespace Nancy.Simple
 {
 	public static class PokerPlayer
 	{
-		public static readonly string VERSION = "flopturnriver";
+		public static readonly string VERSION = "speeding away";
 
 		public static int BetRequest(JObject gameState)
 		{
@@ -103,14 +103,14 @@ namespace Nancy.Simple
             var player = state.players[state.in_action];
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
-
-            if (HighPair(card1, card2))
+            var highestCard = GetBoardHighestCard(state);
+            if (HighPair(card1, card2) && RankToValue.Convert(card1.rank) >= highestCard)
                 return state.pot;
             for (int i = 0; i < 4; i++)
             {
-                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= highestCard)
                     return state.pot;
-                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= highestCard)
                     return state.pot;
             }
             return 0;
@@ -121,14 +121,14 @@ namespace Nancy.Simple
             var player = state.players[state.in_action];
             var card1 = player.hole_cards[0];
             var card2 = player.hole_cards[1];
-
-            if (HighPair(card1, card2))
+            var highestCard = GetBoardHighestCard(state);
+            if (HighPair(card1, card2) && RankToValue.Convert(card1.rank) >= highestCard)
                 return state.pot;
             for (int i = 0; i < 5; i++)
             {
-                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= 10)
+                if (card1.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card1.rank) >= highestCard)
                     return state.pot;
-                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= 10)
+                if (card2.rank.Equals(state.community_cards[i].rank) && RankToValue.Convert(card2.rank) >= highestCard)
                     return state.pot;
             }
             return 0;
