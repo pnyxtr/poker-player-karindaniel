@@ -75,6 +75,12 @@ namespace Nancy.Simple
         }
 
 
+	    private static bool HighPair(HoleCard card1, HoleCard card2)
+	    {
+            var equalCards = card1.rank == card2.rank;
+            return equalCards && RankToValue.Convert(card1.rank) >= 9;
+        }
+
         private static bool GoodHoleCards(HoleCard card1, HoleCard card2)
 	    {
             var equalCards = card1.rank == card2.rank;
@@ -144,9 +150,14 @@ namespace Nancy.Simple
                 if (GoodHoleCards(card1, card2) ||
                     MediumHoleCards(card1, card2))
                     return 10000;
-            }
+            }            
             else if (state.small_blind > 30)
             {
+                if (state.current_buy_in > state.small_blind*2)
+                {
+                    if (!HighPair(card1, card2))
+                        return 0;
+                }
                 if (GoodHoleCards(card1, card2))
                     return 10000;
             }
