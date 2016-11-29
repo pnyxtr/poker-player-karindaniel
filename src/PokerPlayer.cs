@@ -15,7 +15,7 @@ namespace Nancy.Simple
             var card2 = player.hole_cards[1];
 
 
-		    if (state.small_blind > 100)
+		    if (state.small_blind > 30)
 		    {
 		        var equalCards = card1.rank == card2.rank;
 		        var card1High = RankToValue.Convert(card1.rank) >= 10;
